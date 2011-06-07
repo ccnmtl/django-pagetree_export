@@ -35,7 +35,7 @@ setup(
     url="",
     description="Export/Import for Django PageTrees",
     long_description=long_description,
-    install_requires = [],
+    install_requires = ["django-pagetree", "django-pageblocks", "django-quizblock"],
     scripts = [],
     license = "BSD",
     platforms = ["any"],
