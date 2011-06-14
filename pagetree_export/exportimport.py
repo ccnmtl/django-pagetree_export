@@ -1,6 +1,6 @@
 import codecs
 from django.core.files import File
-import lxml.etree as etree
+import xml.etree as etree
 from pageblocks.models import *
 from pagetree.models import *
 import tempfile
