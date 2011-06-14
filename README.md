@@ -91,8 +91,8 @@ the classes with a decorator.  The contract for these classes is:
 
 	def importer(self, etree_node, zipfile):
             new_block = MyPageBlockClass(**some_attributes)
- 	    new_block.save()
-	    return new_block
+            new_block.save()
+            return new_block
 
 The `exporter` and `importer` methods are both optional; you can omit
 one or the other of them to register an exporter with no corresponding
