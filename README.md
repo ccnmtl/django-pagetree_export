@@ -84,12 +84,12 @@ the classes with a decorator.  The contract for these classes is:
     @register_class
     class MyExporter(object):
         block_class = MyPageBlockClass
-	identifier = "mypageblockclass"
+        identifier = "mypageblockclass"
 
-	def exporter(self, block, xmlfile, zipfile):
-	    """ write to the file, return nothing """
+        def exporter(self, block, xmlfile, zipfile):
+            """ write to the file, return nothing """
 
-	def importer(self, etree_node, zipfile):
+        def importer(self, etree_node, zipfile):
             new_block = MyPageBlockClass(**some_attributes)
             new_block.save()
             return new_block
