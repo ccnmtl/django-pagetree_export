@@ -1,6 +1,6 @@
 import codecs
 from django.core.files import File
-import xml.etree as etree
+import lxml.etree as etree
 from pageblocks.models import *
 from pagetree.models import *
 import tempfile
@@ -127,7 +127,7 @@ def export_block(block, xmlfile, zipfile):
 def export_node(node, xmlfile, zipfile):
     print >> xmlfile, \
         u"""<section slug="%s" label="%s" is_root="%s">""" % (
-        node.slug, sanitize(node.label), node.is_root)
+        node.slug, sanitize(node.label), node.is_root())
     for block in node.pageblock_set.all():
         export_block(block, xmlfile, zipfile)
     for child in node.get_children():
