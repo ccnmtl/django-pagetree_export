@@ -19,8 +19,9 @@ def register(block_class, identifier,
 def register_class(cls):
     block_class = cls.block_class
     identifier = cls.identifier
-    export_fn = getattr(cls, 'exporter', None)
-    import_fn = getattr(cls, 'importer', None)
+    inst = cls()
+    export_fn = getattr(inst, 'exporter', None)
+    import_fn = getattr(inst, 'importer', None)
     register(block_class, identifier, export_fn, import_fn, override=False)
     return cls
 
