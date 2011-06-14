@@ -195,7 +195,7 @@ def import_node(hierarchy, section, zipfile, parent=None):
 
 from pagetree.helpers import get_hierarchy
 
-def import_zip(zipfile):
+def import_zip(zipfile, hierarchy_name=None):
     if 'site.xml' not in zipfile.namelist():
         raise TypeError("Badly formatted import file")
     if 'version.txt' not in zipfile.namelist():
@@ -205,7 +205,7 @@ def import_zip(zipfile):
     structure = zipfile.read("site.xml")
     structure = etree.fromstring(structure)
 
-    name = structure.get("name")
+    name = hierarchy_name or structure.get("name")
     base_url = structure.get("base_url")
 
     hierarchy = get_hierarchy(name=name)
