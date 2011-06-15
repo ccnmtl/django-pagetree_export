@@ -3,7 +3,7 @@ _pageblock_importers = {}
 
 def register(block_class, identifier,
              export_fn=None, import_fn=None,
-             override=False):
+             override=False, export_type='xmlzip'):
     if not override:
         if export_fn and block_class in _pageblock_exporters:
             raise RuntimeError("A pageblock exporter is already registered "
@@ -12,9 +12,9 @@ def register(block_class, identifier,
             raise RuntimeError("A pageblock importer is already registered "
                                "for type %s" % identifier)
     if export_fn:
-        _pageblock_exporters[block_class] = (identifier, export_fn)
+        _pageblock_exporters.setdefault(export_type, {})[block_class] = (identifier, export_fn)
     if import_fn:
-        _pageblock_importers[identifier] = import_fn
+        _pageblock_importers.setdefault(export_type, {})[identifier] = import_fn
 
 def register_class(cls):
     block_class = cls.block_class
@@ -22,11 +22,12 @@ def register_class(cls):
     inst = cls()
     export_fn = getattr(inst, 'exporter', None)
     import_fn = getattr(inst, 'importer', None)
-    register(block_class, identifier, export_fn, import_fn, override=False)
+    export_type = getattr(cls, 'export_type', 'xmlzip')
+    register(block_class, identifier, export_fn, import_fn, override=False, export_type=export_type)
     return cls
 
-def get_exporter(block_class):
-    return _pageblock_exporters[block_class]
+def get_exporter(block_class, export_type='xmlzip'):
+    return _pageblock_exporters[export_type][block_class]
 
-def get_importer(identifier):
-    return _pageblock_importers[identifier]
+def get_importer(identifier, export_type='xmlzip'):
+    return _pageblock_importers[export_type][identifier]
