@@ -54,9 +54,9 @@ will be replaced with the attributes described in the imported
 zipfile.
 
 If you're doing export/import on a pair of simple pagetree sites with
-only one hierarchy (e.g. https://github.com/ccnmtl/Diabeaters.git) you
+only one hierarchy (e.g. https://github.com/ccnmtl/Diabeaters) you
 probably don't need to worry about this -- you'll want the
-importee-site to match the exported-site exactly.
+imported-site to match the exported-site exactly.
 
 However, if you're integrating this library into a complex pagetree
 project which manages multiple hierarchies in a single installation,
