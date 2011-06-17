@@ -1,6 +1,6 @@
 import codecs
 from django.core.files import File
-import xml.etree as etree
+import lxml.etree as etree
 from pageblocks.models import *
 from pagetree.models import *
 import tempfile
@@ -127,7 +127,7 @@ def export_block(block, xmlfile, zipfile):
 def export_node(node, xmlfile, zipfile):
     print >> xmlfile, \
         u"""<section slug="%s" label="%s" is_root="%s">""" % (
-        node.slug, sanitize(node.label), node.is_root)
+        node.slug, sanitize(node.label), node.is_root())
     for block in node.pageblock_set.all():
         export_block(block, xmlfile, zipfile)
     for child in node.get_children():
@@ -195,7 +195,7 @@ def import_node(hierarchy, section, zipfile, parent=None):
 
 from pagetree.helpers import get_hierarchy
 
-def import_zip(zipfile):
+def import_zip(zipfile, hierarchy_name=None):
     if 'site.xml' not in zipfile.namelist():
         raise TypeError("Badly formatted import file")
     if 'version.txt' not in zipfile.namelist():
@@ -205,7 +205,7 @@ def import_zip(zipfile):
     structure = zipfile.read("site.xml")
     structure = etree.fromstring(structure)
 
-    name = structure.get("name")
+    name = hierarchy_name or structure.get("name")
     base_url = structure.get("base_url")
 
     hierarchy = get_hierarchy(name=name)

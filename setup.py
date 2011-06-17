@@ -29,13 +29,16 @@ from setuptools import setup
 
 setup(
     name="django-pagetree_export",
-    version="0.1.1",
+    version="0.1",
     author="Ethan Jucovy",
     author_email="ccnmtl-dev@ccnmtl.columbia.edu",
     url="",
     description="Export/Import for Django PageTrees",
     long_description=long_description,
-    install_requires = ["pagetree", "pageblocks", "quizblock"],
+    install_requires = [#"django-pagetree", 
+                        #"django-pageblocks", 
+                        ],
+    extras_require = {'quizblocks': ["django-quizblock"]},
     scripts = [],
     license = "BSD",
     platforms = ["any"],

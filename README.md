@@ -51,7 +51,32 @@ duplicate hierarchies with identical names, and duplicate root nodes
 within a hierarchy, by using `get_or_create` rather than `create`.  If
 a matching hierarchy (or a root node) already exists, its attributes
 will be replaced with the attributes described in the imported
-zipfile. You probably don't need to worry about this.
+zipfile.
+
+If you're doing export/import on a pair of simple pagetree sites with
+only one hierarchy (e.g. https://github.com/ccnmtl/Diabeaters) you
+probably don't need to worry about this -- you'll want the
+imported-site to match the exported-site exactly.
+
+However, if you're integrating this library into a complex pagetree
+project which manages multiple hierarchies in a single installation,
+you probably *do* need to worry about this: you're using export/import
+as a copy function within a single site.  The way to worry about this
+is to override the import-bundle's knowledge of its own hierarchy
+name, by passing a `hierarchy_name` argument to the `import_zip`
+function.  Here's an example, using the hostname of the current
+request as the hierarchy identifier:
+   
+    file = request.FILES['file']
+    zipfile = ZipFile(file)
+ 
+    # If we exported the morx.com site, and we are now
+    # visiting http://fleem.com/import/, we don't want
+    # to touch the morx.com hierarchy -- instead we want
+    # to import the bundle to the fleem.com hierarchy.
+    hierarchy_name = request.get_host()
+    hierarchy = import_zip(zipfile, hierarchy_name)
+
 
 Extensions
 ==========
@@ -84,15 +109,15 @@ the classes with a decorator.  The contract for these classes is:
     @register_class
     class MyExporter(object):
         block_class = MyPageBlockClass
-	identifier = "mypageblockclass"
+        identifier = "mypageblockclass"
 
-	def exporter(self, block, xmlfile, zipfile):
-	    """ write to the file, return nothing """
+        def exporter(self, block, xmlfile, zipfile):
+            """ write to the file, return nothing """
 
-	def importer(self, etree_node, zipfile):
+        def importer(self, etree_node, zipfile):
             new_block = MyPageBlockClass(**some_attributes)
- 	    new_block.save()
-	    return new_block
+            new_block.save()
+            return new_block
 
 The `exporter` and `importer` methods are both optional; you can omit
 one or the other of them to register an exporter with no corresponding
