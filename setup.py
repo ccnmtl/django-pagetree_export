@@ -29,7 +29,7 @@ from setuptools import setup
 
 setup(
     name="django-pagetree_export",
-    version="0.1",
+    version="0.2",
     author="Ethan Jucovy",
     author_email="ccnmtl-dev@ccnmtl.columbia.edu",
     url="",

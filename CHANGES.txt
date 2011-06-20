@@ -1,0 +1,9 @@
+0.2
+===
+
+Fixed quiz import/export, which was previously riddled with NameErrors and AttributeErrors.
+
+0.1
+===
+
+Initial release.
