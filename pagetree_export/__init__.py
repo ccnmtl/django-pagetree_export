@@ -26,8 +26,38 @@ def register_class(cls):
     register(block_class, identifier, export_fn, import_fn, override=False, export_type=export_type)
     return cls
 
+
+class Dummy(object):
+    """ A dummy import/exporter.
+
+    so we can just no-op pageblocks with no exporter instead of 
+    throwing an exception. 
+    TODO: should probably log somewhere when someone tries to 
+    import/export a pageblock that doesn't have an exporter
+    so the end-user can be alerted that not all the content went through
+    """
+    block_class = None
+    identifier = ''
+
+    def exporter(self, block, xmlfile, zipfile):
+        pass
+
+    def importer(self, node, zipfile):
+        return None
+
 def get_exporter(block_class, export_type='xmlzip'):
-    return _pageblock_exporters[export_type][block_class]
+    try:
+        return _pageblock_exporters[export_type][block_class]
+    except KeyError:
+        if hasattr(block_class,'get_exporter'):
+            return block_class.get_exporter(export_type)
+        else:
+            d = Dummy()
+            return ('',d.exporter)
 
 def get_importer(identifier, export_type='xmlzip'):
-    return _pageblock_importers[export_type][identifier]
+    try:
+        return _pageblock_importers[export_type][identifier]
+    except KeyError:
+        d = Dummy()
+        return d.importer

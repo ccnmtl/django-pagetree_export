@@ -1,3 +1,9 @@
+0.3
+===
+
+Moving import/exporters out to their respective pageblocks. Added some
+extra error handling and flexibility on get_exporter().
+
 0.2
 ===
 

@@ -1,5 +1,5 @@
 import cgi
-from pageblocks.models import PageBlock
+from pagetree.models import PageBlock
 
 def asbool(str):
     return str.lower() == "true"

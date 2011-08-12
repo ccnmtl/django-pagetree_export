@@ -10,22 +10,6 @@ from pagetree_export import (register_class as register,
                              get_exporter, get_importer)
 from pagetree_export.utils import asbool, sanitize, get_all_pageblocks
 
-@register
-class Image(object):
-    block_class = ImageBlock
-    identifier = 'image'
-    export_type = 'statichtml'
-
-    def exporter(self, block, xmlfile, zipfile):
-        filename = os.path.basename(block.image.file.name)
-        filename = "pageblocks/%s-%s" % (block.pk, filename)
-        zipfile.write(block.image.file.name, arcname=filename)
-        return {'img_src': '/' + filename.strip('/')}
-
-@register
-class ImagePullQuote(Image):
-    block_class = ImagePullQuoteBlock
-    identifier = 'imagepullquote'
 
 def export_block(block, xmlfile, zipfile):
     object = block.content_object
