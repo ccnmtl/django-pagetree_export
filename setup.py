@@ -1,5 +1,7 @@
-# Copyright (c) 2010, Columbia Center For New Media Teaching And Learning (CCNMTL)
-# All rights reserved.
+from setuptools import setup
+
+# Copyright (c) 2010, Columbia Center For New Media Teaching And
+# Learning (CCNMTL) All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -23,27 +25,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-long_description = ""
-
-from setuptools import setup
-
 setup(
     name="django-pagetree_export",
     version="0.3",
     author="Ethan Jucovy",
-    author_email="ccnmtl-dev@ccnmtl.columbia.edu",
+    author_email="ctl-dev@columbia.edu",
     url="",
     description="Export/Import for Django PageTrees",
-    long_description=long_description,
-    install_requires = [#"django-pagetree", 
-                        #"django-pageblocks", 
-                        ],
-    extras_require = {'quizblocks': ["django-quizblock"]},
-    scripts = [],
-    license = "BSD",
-    platforms = ["any"],
+    long_description='',
+    install_requires=[
+        'django',
+        'django-pagetree',
+    ],
+    extras_require={'quizblocks': ["django-quizblock"]},
+    scripts=[],
+    license="BSD",
+    platforms=["any"],
     zip_safe=False,
     packages=['pagetree_export'],
-    test_suite='nose.collector',
     include_package_data=True,
-    )
+)
