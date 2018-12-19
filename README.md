@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/ccnmtl/django-pagetree_export.svg?branch=master)](https://travis-ci.org/ccnmtl/django-pagetree_export)
+
+
 Installation
 ============
 

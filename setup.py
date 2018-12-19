@@ -27,10 +27,10 @@ from setuptools import setup
 
 setup(
     name="django-pagetree_export",
-    version="0.3",
+    version="0.4",
     author="Ethan Jucovy",
     author_email="ctl-dev@columbia.edu",
-    url="",
+    url="https://github.com/ccnmtl/django-pagetree_export",
     description="Export/Import for Django PageTrees",
     long_description='',
     install_requires=[
