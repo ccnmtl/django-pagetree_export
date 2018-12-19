@@ -1,7 +1,9 @@
+from __future__ import unicode_literals, print_function
+
 from pagetree_export import register_class as register
-from pagetree_export.utils import sanitize
 import quizblock.models as quizblock
-from pagetree_export.utils import asbool, sanitize, get_all_pageblocks
+from pagetree_export.utils import asbool, sanitize
+
 
 @register
 class Quiz(object):
@@ -12,32 +14,38 @@ class Quiz(object):
         filename = "pageblocks/%s-description.txt" % block.pageblock().pk
         zipfile.writestr(filename, block.description.encode("utf8"))
 
-        print >> xmlfile, u"""<quiz rhetorical="%s" description_src="%s">""" % (
-            block.rhetorical, filename)
+        print('<quiz rhetorical="%s" description_src="%s">' % (
+            block.rhetorical, filename),
+              file=xmlfile)
 
         for question in block.question_set.all():
-            print >> xmlfile, u"""<question type="%s">""" % (
-                question.question_type)
+            print('<question type="%s">' % (
+                question.question_type),
+                  file=xmlfile)
 
-            filename = "pageblocks/%s-%s-text.txt" % (block.pageblock().pk, question.pk)
+            filename = "pageblocks/%s-%s-text.txt" % (
+                block.pageblock().pk, question.pk)
             zipfile.writestr(filename, question.text.encode("utf8"))
-            print >> xmlfile, u"<text src='%s' />" % filename
+            print("<text src='%s' />" % filename, file=xmlfile)
 
-            filename = "pageblocks/%s-%s-explanation.txt" % (block.pageblock().pk, question.pk)
+            filename = "pageblocks/%s-%s-explanation.txt" % (
+                block.pageblock().pk, question.pk)
             zipfile.writestr(filename, question.explanation.encode("utf8"))
-            print >> xmlfile, u"<explanation src='%s' />" % filename
-            
-            filename = "pageblocks/%s-%s-introtext.txt" % (block.pageblock().pk, question.pk)
+            print("<explanation src='%s' />" % filename, file=xmlfile)
+
+            filename = "pageblocks/%s-%s-introtext.txt" % (
+                block.pageblock().pk, question.pk)
             zipfile.writestr(filename, question.intro_text.encode("utf8"))
-            print >> xmlfile, u"<introtext src='%s' />" % filename
+            print("<introtext src='%s' />" % filename, file=xmlfile)
 
             for answer in question.answer_set.all():
-                print >> xmlfile, \
-                    u"""<answer label="%s" value="%s" correct="%s" />""" % (
-                    sanitize(answer.label), answer.value, answer.correct)
+                print(
+                    '<answer label="%s" value="%s" correct="%s" />' % (
+                        sanitize(answer.label), answer.value, answer.correct),
+                    file=xmlfile)
 
-            print >> xmlfile, "</question>"
-        print >> xmlfile, "</quiz>"
+            print("</question>", file=xmlfile)
+        print("</quiz>", file=xmlfile)
 
     def importer(self, node, zipfile):
         children = node.getchildren()
@@ -51,8 +59,9 @@ class Quiz(object):
         for child in children[0].iterchildren():
             assert child.tag == "question"
             type = child.get("type")
-            
-            text, explanation, introtext, answers = child.getchildren()[:3] + [child.getchildren()[3:]]        
+
+            text, explanation, introtext, answers = \
+                child.getchildren()[:3] + [child.getchildren()[3:]]
             path = text.get("src")
             text = zipfile.read(path)
             path = explanation.get("src")
@@ -60,8 +69,8 @@ class Quiz(object):
             path = introtext.get("src")
             introtext = zipfile.read(path)
             question = quizblock.Question(
-                quiz=q, text=text, question_type=type, 
-                explanation=explanation, 
+                quiz=q, text=text, question_type=type,
+                explanation=explanation,
                 intro_text=introtext)
             question.save()
 
@@ -70,7 +79,7 @@ class Quiz(object):
                 value = answer.get("value")
                 correct = asbool(answer.get("correct"))
                 answer = quizblock.Answer(
-                    question=question, 
+                    question=question,
                     value=value, label=label, correct=correct)
                 answer.save()
 

@@ -1,50 +1,58 @@
+from __future__ import unicode_literals, print_function
+
+import os
 import codecs
-from django.core.files import File
 import lxml.etree as etree
-from pageblocks.models import *
-from pagetree.models import *
+from pageblocks.models import PageBlock
 import tempfile
 from zipfile import ZipFile
+from pagetree.helpers import get_hierarchy
 
-from pagetree_export import (register_class as register,
-                             get_exporter, get_importer)
-from pagetree_export.utils import asbool, sanitize, get_all_pageblocks
+from pagetree_export import (get_exporter, get_importer)
+from pagetree_export.utils import asbool, sanitize
+
 
 def export_block(block, xmlfile, zipfile):
     object = block.content_object
     type, export_fn = get_exporter(object.__class__)
-    print >> xmlfile, \
-        u"""<pageblock id="%s" type="%s" label="%s" ordinality="%s">""" % (
-        block.pk, type, sanitize(block.label), block.ordinality)
+    print(
+        '<pageblock id="%s" type="%s" label="%s" ordinality="%s">' % (
+            block.pk, type, sanitize(block.label), block.ordinality),
+        file=xmlfile)
     export_fn(object, xmlfile, zipfile)
-    print >> xmlfile, "</pageblock>"
+    print("</pageblock>", file=xmlfile)
+
 
 def export_node(node, xmlfile, zipfile):
-    print >> xmlfile, \
-        u"""<section slug="%s" label="%s" is_root="%s">""" % (
-        node.slug, sanitize(node.label), node.is_root())
+    print(
+        '<section slug="%s" label="%s" is_root="%s">' % (
+            node.slug, sanitize(node.label), node.is_root()),
+        file=xmlfile)
     for block in node.pageblock_set.all():
         export_block(block, xmlfile, zipfile)
     for child in node.get_children():
         export_node(child, xmlfile, zipfile)
-    print >> xmlfile, "</section>"
+    print("</section>", file=xmlfile)
+
 
 def export_zip(hierarchy):
     root = hierarchy.get_root()
 
-    fd, zip_filename = tempfile.mkstemp(prefix="pagetree-export", suffix=".zip")
+    fd, zip_filename = tempfile.mkstemp(prefix="pagetree-export",
+                                        suffix=".zip")
     zipfile = ZipFile(zip_filename, 'w')
     zipfile.writestr("version.txt", "1")
 
     fd, xml_filename = tempfile.mkstemp(prefix="pagetree-site", suffix=".xml")
     xmlfile = codecs.open(xml_filename, 'w', encoding='utf8')
 
-    print >> xmlfile, \
-        u"""<hierarchy name="%s" base_url="%s">""" % (
-        hierarchy.name, hierarchy.base_url)
+    print(
+        '<hierarchy name="%s" base_url="%s">' % (
+            hierarchy.name, hierarchy.base_url),
+        file=xmlfile)
 
     export_node(root, xmlfile, zipfile)
-    print >> xmlfile, "</hierarchy>"
+    print("</hierarchy>", file=xmlfile)
 
     xmlfile.close()
     zipfile.write(xml_filename, arcname="site.xml")
@@ -53,15 +61,18 @@ def export_zip(hierarchy):
     zipfile.close()
     return zip_filename
 
+
 def import_pageblock(hierarchy, section, pageblock, zipfile):
     type = pageblock.get("type")
     label = pageblock.get("label")
     ordinality = pageblock.get("ordinality")
 
     block = get_importer(type)(pageblock, zipfile)
-    pb = PageBlock(section=section, ordinality=ordinality, label=label, content_object=block)
+    pb = PageBlock(section=section, ordinality=ordinality,
+                   label=label, content_object=block)
     pb.save()
     return pb
+
 
 def import_node(hierarchy, section, zipfile, parent=None):
     slug = section.get("slug")
@@ -88,7 +99,6 @@ def import_node(hierarchy, section, zipfile, parent=None):
 
     return s
 
-from pagetree.helpers import get_hierarchy
 
 def import_zip(zipfile, hierarchy_name=None):
     if 'site.xml' not in zipfile.namelist():
